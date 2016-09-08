@@ -17,41 +17,37 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
     
+    //加载HTML
     NSString* htmlPath = [[NSBundle mainBundle] pathForResource:@"index" ofType:@"html"];
     NSString* appHtml = [NSString stringWithContentsOfFile:htmlPath encoding:NSUTF8StringEncoding error:nil];
     NSURL *baseURL = [NSURL fileURLWithPath:htmlPath];
     [_webView loadHTMLString:appHtml baseURL:baseURL];
    
-    
+    //打开调试开关
     [WebViewJavascriptBridge enableLogging];
-    
+    //建立WebView和H5的连接
     _bridge = [WebViewJavascriptBridge bridgeForWebView:_webView];
+    //设置代理
     [_bridge setWebViewDelegate:self];
     
-    [_bridge registerHandler:@"testObjcCallback" handler:^(id data, WVJBResponseCallback responseCallback) {
-        
+    //注册以接收数据
+    [_bridge registerHandler:@"needLogin" handler:^(id data, WVJBResponseCallback responseCallback) {
+        NSLog(@"JS发来的消息：%@",data);
         if ([data[@"login"] integerValue] == 1) {
             LoginViewController *a = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"a"];
             a.delegate = self;
             [self.navigationController pushViewController:a animated:YES];
         }
-        
-        
         responseCallback([NSString stringWithFormat:@"收到JS的消息%@",data]);
     }];
-    
-    
     
 }
 
 - (void)loginSuccess:(NSString *)userName password:(NSString *)password{
     
-    
-    //[_bridge callHandler:@"testJavascriptHandler" data:@{@"username":userName,@"password":password}];
-    [_bridge callHandler:@"testJavascriptHandler" data:@{@"username":userName,@"password":password} responseCallback:^(id responseData) {
-        NSLog(@"%@",[responseData description]);
+    [_bridge callHandler:@"loginSuccess" data:@{@"username":userName,@"password":password} responseCallback:^(id responseData) {
+        NSLog(@"%@",responseData);
     }];
   
 }

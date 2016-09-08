@@ -25,7 +25,7 @@ setupWebViewJavascriptBridge(function(bridge) {
                              }
                              
                              
-                             bridge.registerHandler('testJavascriptHandler', function(data, responseCallback) {
+                             bridge.registerHandler('loginSuccess', function(data, responseCallback) {
                                                     log('JS收到OC的消息', data)
                                                     var responseData = { 'JS':'receive username and password' }
                                                     log('JS回复OC', responseData)
@@ -36,13 +36,12 @@ setupWebViewJavascriptBridge(function(bridge) {
                              document.body.appendChild(document.createElement('br'))
                              
                              
-                             var callbackButton = document.getElementById('buttons').appendChild(document.createElement('button'))
-                             
+                             var callbackButton = document.getElementById('buttons').appendChild(document.createElement('button'))                             
                              callbackButton.innerHTML = '立即登录'
                              callbackButton.onclick = function(e) {
                              e.preventDefault()
-                             log('JS调用"testObjcCallback"发消息给OC')
-                             bridge.callHandler('testObjcCallback', {'login': '1'}, function(response) {
+                             log('JS调用"needLogin"发消息给OC')
+                             bridge.callHandler('needLogin', {'login': '1'}, function(response) {
                                                 log('JS收到OC的回复：', response)
                                                 })
                              }
